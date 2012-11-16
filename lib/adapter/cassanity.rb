@@ -14,7 +14,7 @@ module Adapter
       adapter_options = @options[:read]
       arguments = update_arguments(operation_options, adapter_options, options)
 
-      rows = client.select(arguments)
+      rows = @client.select(arguments)
       rows.empty? ? nil : decode(rows.first)
     end
 
@@ -24,7 +24,7 @@ module Adapter
       adapter_options = @options[:write]
       arguments = update_arguments(operation_options, adapter_options, options)
 
-      client.update(arguments)
+      @client.update(arguments)
     end
 
     # Public
@@ -33,12 +33,12 @@ module Adapter
       adapter_options = @options[:delete]
       arguments = update_arguments(operation_options, adapter_options, options)
 
-      client.delete(arguments)
+      @client.delete(arguments)
     end
 
     # Public
     def clear
-      client.truncate
+      @client.truncate
     end
 
     # Private
