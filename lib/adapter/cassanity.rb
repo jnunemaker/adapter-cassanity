@@ -9,29 +9,29 @@ module Adapter
     def_delegator :@client, :schema
 
     # Public
-    def read(key, args = nil)
+    def read(key, options = nil)
       operation_options = {where: where(key)}
-      adapter_options = options[:read]
-      arguments = update_arguments(operation_options, adapter_options, args)
+      adapter_options = @options[:read]
+      arguments = update_arguments(operation_options, adapter_options, options)
 
       rows = client.select(arguments)
       rows.empty? ? nil : decode(rows.first)
     end
 
     # Public
-    def write(key, attributes, args = nil)
+    def write(key, attributes, options = nil)
       operation_options = {set: encode(attributes), where: where(key)}
-      adapter_options = options[:write]
-      arguments = update_arguments(operation_options, adapter_options, args)
+      adapter_options = @options[:write]
+      arguments = update_arguments(operation_options, adapter_options, options)
 
       client.update(arguments)
     end
 
     # Public
-    def delete(key, args = nil)
+    def delete(key, options = nil)
       operation_options = {where: where(key)}
-      adapter_options = options[:delete]
-      arguments = update_arguments(operation_options, adapter_options, args)
+      adapter_options = @options[:delete]
+      arguments = update_arguments(operation_options, adapter_options, options)
 
       client.delete(arguments)
     end
