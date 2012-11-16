@@ -11,7 +11,7 @@ module Adapter
     # Public
     def read(key, args = nil)
       operation_options = {where: where(key)}
-      adapter_options = options[:read_options]
+      adapter_options = options[:read]
       arguments = update_arguments(operation_options, adapter_options, args)
 
       rows = client.select(arguments)
@@ -21,7 +21,7 @@ module Adapter
     # Public
     def write(key, attributes, args = nil)
       operation_options = {set: encode(attributes), where: where(key)}
-      adapter_options = options[:write_options]
+      adapter_options = options[:write]
       arguments = update_arguments(operation_options, adapter_options, args)
 
       client.update(arguments)
@@ -30,7 +30,7 @@ module Adapter
     # Public
     def delete(key, args = nil)
       operation_options = {where: where(key)}
-      adapter_options = options[:delete_options]
+      adapter_options = options[:delete]
       arguments = update_arguments(operation_options, adapter_options, args)
 
       client.delete(arguments)

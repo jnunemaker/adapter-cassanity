@@ -19,7 +19,7 @@ describe "Cassanity adapter" do
   context "with adapter read options" do
     it "uses read options for read method" do
       client = COLUMN_FAMILIES[:single]
-      options = {read_options: {
+      options = {read: {
         using: {consistency: :quorum},
       }}
       adapter = Adapter[adapter_name].new(client, options)
@@ -34,7 +34,7 @@ describe "Cassanity adapter" do
 
     it "does not override where" do
       client = COLUMN_FAMILIES[:single]
-      options = {read_options: {
+      options = {read: {
         where: {:some_key => 'bar'},
         using: {consistency: :quorum},
       }}
@@ -50,7 +50,7 @@ describe "Cassanity adapter" do
 
     it "can be overriden by read method options" do
       client = COLUMN_FAMILIES[:single]
-      options = {read_options: {
+      options = {read: {
         using: {consistency: :quorum},
       }}
       adapter = Adapter[adapter_name].new(client, options)
@@ -67,7 +67,7 @@ describe "Cassanity adapter" do
   context "with adapter write options" do
     it "uses write options for write method" do
       client = COLUMN_FAMILIES[:single]
-      options = {write_options: {
+      options = {write: {
         using: {consistency: :quorum},
       }}
       adapter = Adapter[adapter_name].new(client, options)
@@ -83,7 +83,7 @@ describe "Cassanity adapter" do
 
     it "does not override where or set" do
       client = COLUMN_FAMILIES[:single]
-      options = {write_options: {
+      options = {write: {
         where: {:some_key => 'should not use this'},
         set: {'name' => 'should not use this'},
         using: {consistency: :quorum,
@@ -101,7 +101,7 @@ describe "Cassanity adapter" do
 
     it "can be overriden by write method options" do
       client = COLUMN_FAMILIES[:single]
-      options = {write_options: {
+      options = {write: {
         using: {consistency: :quorum},
       }}
       adapter = Adapter[adapter_name].new(client, options)
@@ -119,7 +119,7 @@ describe "Cassanity adapter" do
   context "with adapter delete options" do
     it "uses delete options for delete method" do
       client = COLUMN_FAMILIES[:single]
-      options = {delete_options: {
+      options = {delete: {
         using: {consistency: :quorum},
       }}
       adapter = Adapter[adapter_name].new(client, options)
@@ -134,7 +134,7 @@ describe "Cassanity adapter" do
 
     it "does not override where" do
       client = COLUMN_FAMILIES[:single]
-      options = {delete_options: {
+      options = {delete: {
         where: {:some_key => 'bar'},
         using: {consistency: :quorum},
       }}
@@ -150,7 +150,7 @@ describe "Cassanity adapter" do
 
     it "can be overriden by delete method options" do
       client = COLUMN_FAMILIES[:single]
-      options = {delete_options: {
+      options = {delete: {
         using: {consistency: :quorum},
       }}
       adapter = Adapter[adapter_name].new(client, options)
