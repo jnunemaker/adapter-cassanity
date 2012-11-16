@@ -8,43 +8,35 @@ module Adapter
 
     def_delegator :@client, :schema
 
-    def read(key)
-      select_arguments = {where: where(key)}
+    # Public
+    def read(key, args = nil)
+      operation_options = {where: where(key)}
+      adapter_options = options[:read_options]
+      arguments = update_arguments(operation_options, adapter_options, args)
 
-      if (read_options = options[:read_options])
-        filtered_options = without_keys(read_options, select_arguments.keys)
-        select_arguments.update(filtered_options)
-      end
-
-      rows = client.select(select_arguments)
+      rows = client.select(arguments)
       rows.empty? ? nil : decode(rows.first)
     end
 
-    def write(key, attributes)
-      update_arguments = {
-        set: encode(attributes),
-        where: where(key)
-      }
+    # Public
+    def write(key, attributes, args = nil)
+      operation_options = {set: encode(attributes), where: where(key)}
+      adapter_options = options[:write_options]
+      arguments = update_arguments(operation_options, adapter_options, args)
 
-      if (write_options = options[:write_options])
-        filtered_options = without_keys(write_options, update_arguments.keys)
-        update_arguments.update(filtered_options)
-      end
-
-      client.update(update_arguments)
+      client.update(arguments)
     end
 
-    def delete(key)
-      delete_arguments = {where: where(key)}
+    # Public
+    def delete(key, args = nil)
+      operation_options = {where: where(key)}
+      adapter_options = options[:delete_options]
+      arguments = update_arguments(operation_options, adapter_options, args)
 
-      if (delete_options = options[:delete_options])
-        filtered_options = without_keys(delete_options, delete_arguments.keys)
-        delete_arguments.update(filtered_options)
-      end
-
-      client.delete(delete_arguments)
+      client.delete(arguments)
     end
 
+    # Public
     def clear
       client.truncate
     end
@@ -60,8 +52,20 @@ module Adapter
     end
 
     # Private
-    def without_keys(options, keys)
-      options.reject { |key| keys.include?(key) }
+    def update_arguments(operation_options, adapter_options, method_options)
+      keys = operation_options.keys
+
+      if !adapter_options.nil? && !adapter_options.empty?
+        filtered_options = adapter_options.reject { |key| keys.include?(key) }
+        operation_options.update(filtered_options)
+      end
+
+      if !method_options.nil? && !method_options.empty?
+        filtered_options = method_options.reject { |key| keys.include?(key) }
+        operation_options.update(filtered_options)
+      end
+
+      operation_options
     end
   end
 end
