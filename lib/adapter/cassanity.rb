@@ -15,12 +15,12 @@ module Adapter
       arguments = update_arguments(operation_options, adapter_options, options)
 
       rows = @client.select(arguments)
-      rows.empty? ? nil : decode(rows.first)
+      rows.empty? ? nil : rows.first
     end
 
     # Public
     def write(key, attributes, options = nil)
-      operation_options = {set: encode(attributes), where: where(key)}
+      operation_options = {set: attributes, where: where(key)}
       adapter_options = @options[:write]
       arguments = update_arguments(operation_options, adapter_options, options)
 
@@ -37,7 +37,7 @@ module Adapter
     end
 
     # Public
-    def clear
+    def clear(options = nil)
       @client.truncate
     end
 

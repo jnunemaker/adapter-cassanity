@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+* Updates for adapter 0.7.0.
+
 ## 0.2.0
 
 * Added adapter options: :read, :write, :delete. These can be used to tune consistency and all other operation arguments.
