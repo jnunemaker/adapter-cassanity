@@ -29,6 +29,14 @@ client = apps
 adapter = Adapter[:cassanity].new(client)
 adapter.clear
 
+# you can also set options for the adapter
+using = {using: {consistency: :quorum}}
+adapter = Adapter[:cassanity].new(client, {
+  read: using,   # read using quorum consistency
+  write: using,  # write using quorum consistency
+  delete: using, # delete using quorum consistency
+})
+
 id = CassandraCQL::UUID.new
 
 adapter.read(id) # => nil
@@ -44,6 +52,10 @@ adapter.read(id) # => {'id' => ..., 'name' => 'GitHub'}
 
 adapter.clear
 adapter.read(id) # => nil
+
+# You can also override adapter options per method:
+# This will perform read with consistency set to ONE.
+adapter.read(id, using: {consistency: :one})
 ```
 
 ## Installation
