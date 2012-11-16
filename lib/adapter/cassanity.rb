@@ -9,19 +9,40 @@ module Adapter
     def_delegator :@client, :schema
 
     def read(key)
-      rows = client.select(where: where(key))
+      select_arguments = {where: where(key)}
+
+      if (read_options = options[:read_options])
+        filtered_options = without_keys(read_options, select_arguments.keys)
+        select_arguments.update(filtered_options)
+      end
+
+      rows = client.select(select_arguments)
       rows.empty? ? nil : decode(rows.first)
     end
 
     def write(key, attributes)
-      client.update({
+      update_arguments = {
         set: encode(attributes),
-        where: where(key),
-      })
+        where: where(key)
+      }
+
+      if (write_options = options[:write_options])
+        filtered_options = without_keys(write_options, update_arguments.keys)
+        update_arguments.update(filtered_options)
+      end
+
+      client.update(update_arguments)
     end
 
     def delete(key)
-      client.delete(where: where(key))
+      delete_arguments = {where: where(key)}
+
+      if (delete_options = options[:delete_options])
+        filtered_options = without_keys(delete_options, delete_arguments.keys)
+        delete_arguments.update(filtered_options)
+      end
+
+      client.delete(delete_arguments)
     end
 
     def clear
@@ -36,6 +57,11 @@ module Adapter
         primary_key = schema.primary_keys.first
         {primary_key => criteria}
       end
+    end
+
+    # Private
+    def without_keys(options, keys)
+      options.reject { |key| keys.include?(key) }
     end
   end
 end
