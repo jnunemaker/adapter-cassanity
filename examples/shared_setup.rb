@@ -8,10 +8,8 @@ $:.unshift(lib_path)
 
 require 'adapter/cassanity'
 
-client     = CassandraCQL::Database.new('127.0.0.1:9160')
-executor   = Cassanity::Executors::CassandraCql.new(client: client)
-connection = Cassanity::Connection.new(executor: executor)
-keyspace   = connection.keyspace('adapter_cassanity')
+client     = Cassanity::Client.new('127.0.0.1:9160')
+keyspace   = client.keyspace(:adapter_cassanity)
 keyspace.recreate
 
 AppsCF = keyspace.column_family(:apps, {

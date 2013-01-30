@@ -1,7 +1,7 @@
 require_relative 'shared_setup'
 
 client = AppsCF
-using = {using: {consistency: :quorum}}
+using = {using: {consistency: :one}}
 adapter = Adapter[:cassanity].new(client, {
   read: using,
   write: using,

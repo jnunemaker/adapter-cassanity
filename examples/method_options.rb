@@ -6,6 +6,6 @@ adapter.clear
 
 id = CassandraCQL::UUID.new
 
-adapter.write(id, {name: 'GitHub'}, using: {consistency: :quorum})
-pp adapter.read(id, using: {consistency: :quorum})
+adapter.write(id, {name: 'GitHub'}, using: {consistency: :one})
+pp adapter.read(id, using: {consistency: :one})
 adapter.delete(id)

@@ -1,16 +1,14 @@
 # Adapter::Cassanity
 
-Adapter for Cassanity.
+Adapter for Cassanity. Defaults consistency to :quorum.
 
 ## Usage
 
 ```ruby
 require 'adapter/cassanity'
 
-client     = CassandraCQL::Database.new('127.0.0.1:9160')
-executor   = Cassanity::Executors::CassandraCql.new(client: client)
-connection = Cassanity::Connection.new(executor: executor)
-keyspace   = connection.keyspace('adapter_cassanity')
+client     = Cassanity::Client.new('127.0.0.1:9160')
+keyspace   = client.keyspace('adapter_cassanity')
 keyspace.recreate
 
 apps = keyspace.column_family(:apps, {
@@ -30,11 +28,11 @@ adapter = Adapter[:cassanity].new(client)
 adapter.clear
 
 # you can also set options for the adapter
-using = {using: {consistency: :quorum}}
+using = {using: {consistency: :all}}
 adapter = Adapter[:cassanity].new(client, {
-  read: using,   # read using quorum consistency
-  write: using,  # write using quorum consistency
-  delete: using, # delete using quorum consistency
+  read: using,   # read using all consistency
+  write: using,  # write using all consistency
+  delete: using, # delete using all consistency
 })
 
 id = CassandraCQL::UUID.new
