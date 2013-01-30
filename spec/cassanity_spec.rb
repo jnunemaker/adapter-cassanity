@@ -20,13 +20,13 @@ describe "Cassanity adapter" do
     it "uses read options for read method" do
       client = COLUMN_FAMILIES[:single]
       options = {read: {
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }}
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:select).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }).and_return([])
 
       adapter.read('foo')
@@ -36,13 +36,13 @@ describe "Cassanity adapter" do
       client = COLUMN_FAMILIES[:single]
       options = {read: {
         where: {:some_key => 'bar'},
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }}
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:select).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }).and_return([])
 
       adapter.read('foo')
@@ -51,7 +51,7 @@ describe "Cassanity adapter" do
     it "can be overriden by read method options" do
       client = COLUMN_FAMILIES[:single]
       options = {read: {
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }}
       adapter = Adapter[adapter_name].new(client, options)
 
@@ -68,14 +68,14 @@ describe "Cassanity adapter" do
     it "uses write options for write method" do
       client = COLUMN_FAMILIES[:single]
       options = {write: {
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }}
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:update).with({
         set: {'name' => 'New Name'},
         where: {:some_key => 'foo'},
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       })
 
       adapter.write('foo', {'name' => 'New Name'})
@@ -86,14 +86,14 @@ describe "Cassanity adapter" do
       options = {write: {
         where: {:some_key => 'should not use this'},
         set: {'name' => 'should not use this'},
-        using: {consistency: :quorum,
+        using: {consistency: :one,
       }}}
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:update).with({
         set: {'name' => 'New Name'},
         where: {:some_key => 'foo'},
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       })
 
       adapter.write('foo', {'name' => 'New Name'})
@@ -102,7 +102,7 @@ describe "Cassanity adapter" do
     it "can be overriden by write method options" do
       client = COLUMN_FAMILIES[:single]
       options = {write: {
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }}
       adapter = Adapter[adapter_name].new(client, options)
 
@@ -120,13 +120,13 @@ describe "Cassanity adapter" do
     it "uses delete options for delete method" do
       client = COLUMN_FAMILIES[:single]
       options = {delete: {
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }}
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:delete).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       })
 
       adapter.delete('foo')
@@ -136,13 +136,13 @@ describe "Cassanity adapter" do
       client = COLUMN_FAMILIES[:single]
       options = {delete: {
         where: {:some_key => 'bar'},
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }}
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:delete).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       })
 
       adapter.delete('foo')
@@ -151,7 +151,7 @@ describe "Cassanity adapter" do
     it "can be overriden by delete method options" do
       client = COLUMN_FAMILIES[:single]
       options = {delete: {
-        using: {consistency: :quorum},
+        using: {consistency: :one},
       }}
       adapter = Adapter[adapter_name].new(client, options)
 
