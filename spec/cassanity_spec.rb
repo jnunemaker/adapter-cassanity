@@ -16,6 +16,49 @@ describe "Cassanity adapter" do
     it_behaves_like 'an adapter'
   end
 
+  context "default read consistency" do
+    it "is :quorum" do
+      client = COLUMN_FAMILIES[:single]
+      adapter = Adapter[adapter_name].new(client)
+
+      client.should_receive(:select).with({
+        where: {:some_key => 'foo'},
+        using: {consistency: :quorum},
+      }).and_return([])
+
+      adapter.read('foo')
+    end
+  end
+
+  context "default write consistency" do
+    it "is :quorum" do
+      client = COLUMN_FAMILIES[:single]
+      adapter = Adapter[adapter_name].new(client)
+
+      client.should_receive(:update).with({
+        set: {'name' => 'New Name'},
+        where: {:some_key => 'foo'},
+        using: {consistency: :quorum},
+      })
+
+      adapter.write('foo', {'name' => 'New Name'})
+    end
+  end
+
+  context "default delete consistency" do
+    it "is :quorum" do
+      client = COLUMN_FAMILIES[:single]
+      adapter = Adapter[adapter_name].new(client)
+
+      client.should_receive(:delete).with({
+        where: {:some_key => 'foo'},
+        using: {consistency: :quorum},
+      })
+
+      adapter.delete('foo')
+    end
+  end
+
   context "with adapter read options" do
     it "uses read options for read method" do
       client = COLUMN_FAMILIES[:single]
