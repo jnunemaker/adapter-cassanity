@@ -18,5 +18,5 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency 'adapter', '~> 0.7.0'
-  gem.add_dependency 'cassanity', '~> 0.2'
+  gem.add_dependency 'cassanity', '~> 0.4'
 end
