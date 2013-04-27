@@ -6,8 +6,6 @@ module Adapter
   module Cassanity
     extend Forwardable
 
-    def_delegator :@client, :schema
-
     # Public
     def read(key, options = nil)
       operation_options = {where: where(key)}
@@ -42,13 +40,9 @@ module Adapter
     end
 
     # Private
-    def where(criteria)
-      if schema.composite_primary_key?
-        criteria
-      else
-        primary_key = schema.primary_keys.first
-        {primary_key => criteria}
-      end
+    def where(key)
+      primary_key = @options.fetch(:primary_key)
+      {primary_key => key}
     end
 
     # Private

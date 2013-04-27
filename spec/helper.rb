@@ -43,22 +43,7 @@ cassandra_setup = lambda { |args|
     }),
   })
 
-  COLUMN_FAMILIES[:composite] = keyspace.column_family(:composite, {
-    schema: Cassanity::Schema.new({
-      primary_key: [:bucket, :id],
-      columns: {
-        bucket: :text,
-        id: :timeuuid,
-        one: :text,
-        two: :text,
-        three: :text,
-        four: :text,
-      }
-    }),
-  })
-
   COLUMN_FAMILIES[:single].create
-  COLUMN_FAMILIES[:composite].create
 }
 
 RSpec.configure do |config|
