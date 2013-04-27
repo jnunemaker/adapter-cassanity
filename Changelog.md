@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+* Drop support for composite primary keys.
+* Force supplying primary_key for adapter rather than reflecting from schema. Since cassanity has migrations, it is no longer needed to always supply schema. Easier to pass primary key and more performant than reflecting from the database like AR does.
+
 ## 0.3.0
 
 * Updates for adapter 0.7.0.
