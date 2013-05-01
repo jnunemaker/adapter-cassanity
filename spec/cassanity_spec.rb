@@ -193,6 +193,7 @@ describe "Cassanity adapter" do
         ],
         using: {consistency: :one},
       })
+      client.should_not_receive(:update)
 
       adapter.write('foo', {'name' => 'New Name'}, using: {consistency: :one}, modifications: [ [:other] ])
     end
