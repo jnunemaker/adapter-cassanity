@@ -23,7 +23,8 @@ cassandra_setup = lambda { |args|
   keyspace_name = ENV.fetch('CASSANDRA_KEYSPACE_NAME', 'adapter_cassanity')
   client        = CassandraCQL::Database.new(host, cql_version: '3.0.0')
   executor      = Cassanity::Executors::CassandraCql.new({
-    client: client,
+    client: client, # cassanity 0.4.0 wants this
+    driver: client, # cassanity 0.5.0 wants this
     logger: logger,
   })
   connection    = Cassanity::Connection.new(executor: executor)

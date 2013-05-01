@@ -175,6 +175,28 @@ describe "Cassanity adapter" do
 
       adapter.write('foo', {'name' => 'New Name'}, using: {consistency: :one})
     end
+
+    it "accepts other batch operations" do
+      client = COLUMN_FAMILIES[:single]
+      options = {
+        primary_key: :some_key,
+        write: {
+          using: {consistency: :one},
+        },
+      }
+      adapter = Adapter[adapter_name].new(client, options)
+
+      client.should_receive(:batch).with({
+        modifications: [
+          [:update, set: {'name' => 'New Name'}, where: {:some_key => 'foo'}],
+          [:other],
+        ],
+        using: {consistency: :one},
+      })
+      client.should_not_receive(:update)
+
+      adapter.write('foo', {'name' => 'New Name'}, using: {consistency: :one}, modifications: [ [:other] ])
+    end
   end
 
   context "with adapter delete options" do
