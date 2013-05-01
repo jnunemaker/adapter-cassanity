@@ -19,7 +19,7 @@ module Adapter
     # Public
     def write(key, attributes, options = nil)
       operation_options = {set: attributes, where: where(key)}
-      if options && modifications = options.delete(:modifications).presence
+      if options && (modifications = options.delete(:modifications)) && modifications.any?
         modifications = [ [:update, operation_options] ] + modifications
         operation_options = {modifications: modifications}
       end
