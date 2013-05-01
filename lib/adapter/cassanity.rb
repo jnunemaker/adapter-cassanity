@@ -47,7 +47,7 @@ module Adapter
 
     # Private.
     def prepare_operation(options, operation, operation_options)
-      if options && (modifications = options.delete(:modifications)) && modifications.any?
+      if options && (modifications = options[:modifications]) && modifications.any?
         operation_options = {modifications: [ [operation, operation_options], *modifications ]}
         operation = :batch
       end
