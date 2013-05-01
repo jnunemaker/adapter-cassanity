@@ -19,10 +19,18 @@ module Adapter
     # Public
     def write(key, attributes, options = nil)
       operation_options = {set: attributes, where: where(key)}
+      if options && modifications = options.delete(:modifications).presence
+        modifications = [ [:update, operation_options] ] + modifications
+        operation_options = {modifications: modifications}
+      end
       adapter_options = with_default_consistency(@options[:write])
       arguments = update_arguments(operation_options, adapter_options, options)
 
-      @client.update(arguments)
+      if arguments[:modifications]
+        @client.batch(arguments)
+      else
+        @client.update(arguments)
+      end
     end
 
     # Public
