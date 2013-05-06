@@ -18,11 +18,11 @@ module Adapter
 
     # Public
     def write(key, attributes, options = nil)
-      operation_options = {set: attributes, where: where(key)}
+      operation, operation_options = prepare_operation(options, :update, set: attributes, where: where(key))
       adapter_options = with_default_consistency(@options[:write])
       arguments = update_arguments(operation_options, adapter_options, options)
 
-      @client.update(arguments)
+      @client.send(operation, arguments)
     end
 
     # Public
@@ -43,6 +43,15 @@ module Adapter
     def where(key)
       primary_key = @options.fetch(:primary_key)
       {primary_key => key}
+    end
+
+    # Private.
+    def prepare_operation(options, operation, operation_options)
+      if options && (modifications = options[:modifications]) && modifications.any?
+        operation_options = {modifications: [ [operation, operation_options], *modifications ]}
+        operation = :batch
+      end
+      [ operation, operation_options ]
     end
 
     # Private
