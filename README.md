@@ -7,7 +7,7 @@ Adapter for Cassanity. Defaults consistency to :quorum.
 ```ruby
 require 'adapter/cassanity'
 
-client     = Cassanity::Client.new('127.0.0.1:9160')
+client     = Cassanity::Client.new(['127.0.0.1'], 9160)
 keyspace   = client.keyspace('adapter_cassanity')
 keyspace.recreate
 
@@ -27,15 +27,7 @@ client = apps
 adapter = Adapter[:cassanity].new(client)
 adapter.clear
 
-# you can also set options for the adapter
-using = {using: {consistency: :all}}
-adapter = Adapter[:cassanity].new(client, {
-  read: using,   # read using all consistency
-  write: using,  # write using all consistency
-  delete: using, # delete using all consistency
-})
-
-id = CassandraCQL::UUID.new
+id = Cql::TimeUuid::Generator.new.next
 
 adapter.read(id) # => nil
 
@@ -50,10 +42,6 @@ adapter.read(id) # => {'id' => ..., 'name' => 'GitHub'}
 
 adapter.clear
 adapter.read(id) # => nil
-
-# You can also override adapter options per method:
-# This will perform read with consistency set to ONE.
-adapter.read(id, using: {consistency: :one})
 ```
 
 ## Installation

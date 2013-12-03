@@ -9,7 +9,7 @@ module Adapter
     # Public
     def read(key, options = nil)
       operation_options = {where: where(key)}
-      adapter_options = with_default_consistency(@options[:read])
+      adapter_options = @options[:read]
       arguments = update_arguments(operation_options, adapter_options, options)
 
       rows = @client.select(arguments)
@@ -19,7 +19,7 @@ module Adapter
     # Public
     def write(key, attributes, options = nil)
       operation, operation_options = prepare_operation(options, :update, set: attributes, where: where(key))
-      adapter_options = with_default_consistency(@options[:write])
+      adapter_options = @options[:write]
       arguments = update_arguments(operation_options, adapter_options, options)
 
       @client.send(operation, arguments)
@@ -28,7 +28,7 @@ module Adapter
     # Public
     def delete(key, options = nil)
       operation_options = {where: where(key)}
-      adapter_options = with_default_consistency(@options[:delete])
+      adapter_options = @options[:delete]
       arguments = update_arguments(operation_options, adapter_options, options)
 
       @client.delete(arguments)
@@ -69,14 +69,6 @@ module Adapter
       end
 
       operation_options
-    end
-
-    # Private
-    def with_default_consistency(options)
-      options ||= {}
-      options[:using] ||= {}
-      options[:using][:consistency] ||= :quorum
-      options
     end
   end
 end

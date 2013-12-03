@@ -16,63 +16,20 @@ describe "Cassanity adapter" do
     it_behaves_like 'an adapter'
   end
 
-  context "default read consistency" do
-    it "is :quorum" do
-      client = COLUMN_FAMILIES[:single]
-      adapter = Adapter[adapter_name].new(client, primary_key: :some_key,)
-
-      client.should_receive(:select).with({
-        where: {:some_key => 'foo'},
-        using: {consistency: :quorum},
-      }).and_return([])
-
-      adapter.read('foo')
-    end
-  end
-
-  context "default write consistency" do
-    it "is :quorum" do
-      client = COLUMN_FAMILIES[:single]
-      adapter = Adapter[adapter_name].new(client, primary_key: :some_key,)
-
-      client.should_receive(:update).with({
-        set: {'name' => 'New Name'},
-        where: {:some_key => 'foo'},
-        using: {consistency: :quorum},
-      })
-
-      adapter.write('foo', {'name' => 'New Name'})
-    end
-  end
-
-  context "default delete consistency" do
-    it "is :quorum" do
-      client = COLUMN_FAMILIES[:single]
-      adapter = Adapter[adapter_name].new(client, primary_key: :some_key)
-
-      client.should_receive(:delete).with({
-        where: {:some_key => 'foo'},
-        using: {consistency: :quorum},
-      })
-
-      adapter.delete('foo')
-    end
-  end
-
   context "with adapter read options" do
     it "uses read options for read method" do
       client = COLUMN_FAMILIES[:single]
       options = {
         primary_key: :some_key,
         read: {
-          using: {consistency: :one},
+          using: {ttl: 10},
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:select).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :one},
+        using: {ttl: 10},
       }).and_return([])
 
       adapter.read('foo')
@@ -84,14 +41,14 @@ describe "Cassanity adapter" do
         primary_key: :some_key,
         read: {
           where: {:some_key => 'bar'},
-          using: {consistency: :one},
+          using: {ttl: 10},
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:select).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :one},
+        using: {ttl: 10},
       }).and_return([])
 
       adapter.read('foo')
@@ -102,17 +59,17 @@ describe "Cassanity adapter" do
       options = {
         primary_key: :some_key,
         read: {
-          using: {consistency: :one},
+          using: {ttl: 20},
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:select).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :one},
+        using: {ttl: 10},
       }).and_return([])
 
-      adapter.read('foo', using: {consistency: :one})
+      adapter.read('foo', using: {ttl: 10})
     end
   end
 
@@ -122,7 +79,7 @@ describe "Cassanity adapter" do
       options = {
         primary_key: :some_key,
         write: {
-          using: {consistency: :one},
+          using: {ttl: 10},
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
@@ -130,7 +87,7 @@ describe "Cassanity adapter" do
       client.should_receive(:update).with({
         set: {'name' => 'New Name'},
         where: {:some_key => 'foo'},
-        using: {consistency: :one},
+        using: {ttl: 10},
       })
 
       adapter.write('foo', {'name' => 'New Name'})
@@ -143,7 +100,7 @@ describe "Cassanity adapter" do
         write: {
           where: {:some_key => 'should not use this'},
           set: {'name' => 'should not use this'},
-          using: {consistency: :one}
+          using: {ttl: 10}
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
@@ -151,7 +108,7 @@ describe "Cassanity adapter" do
       client.should_receive(:update).with({
         set: {'name' => 'New Name'},
         where: {:some_key => 'foo'},
-        using: {consistency: :one},
+        using: {ttl: 10},
       })
 
       adapter.write('foo', {'name' => 'New Name'})
@@ -162,7 +119,7 @@ describe "Cassanity adapter" do
       options = {
         primary_key: :some_key,
         write: {
-          using: {consistency: :one},
+          using: {ttl: 10},
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
@@ -170,10 +127,10 @@ describe "Cassanity adapter" do
       client.should_receive(:update).with({
         set: {'name' => 'New Name'},
         where: {:some_key => 'foo'},
-        using: {consistency: :one},
+        using: {ttl: 20},
       })
 
-      adapter.write('foo', {'name' => 'New Name'}, using: {consistency: :one})
+      adapter.write('foo', {'name' => 'New Name'}, using: {ttl: 20})
     end
 
     it "accepts other batch operations" do
@@ -181,7 +138,7 @@ describe "Cassanity adapter" do
       options = {
         primary_key: :some_key,
         write: {
-          using: {consistency: :one},
+          using: {ttl: 10},
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
@@ -191,11 +148,11 @@ describe "Cassanity adapter" do
           [:update, set: {'name' => 'New Name'}, where: {:some_key => 'foo'}],
           [:other],
         ],
-        using: {consistency: :one},
+        using: {ttl: 10},
       })
       client.should_not_receive(:update)
 
-      adapter.write('foo', {'name' => 'New Name'}, using: {consistency: :one}, modifications: [ [:other] ])
+      adapter.write('foo', {'name' => 'New Name'}, using: {ttl: 10}, modifications: [ [:other] ])
     end
   end
 
@@ -205,14 +162,14 @@ describe "Cassanity adapter" do
       options = {
         primary_key: :some_key,
         delete: {
-          using: {consistency: :one},
+          using: {ttl: 10},
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:delete).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :one},
+        using: {ttl: 10},
       })
 
       adapter.delete('foo')
@@ -224,14 +181,14 @@ describe "Cassanity adapter" do
         primary_key: :some_key,
         delete: {
           where: {:some_key => 'bar'},
-          using: {consistency: :one},
+          using: {ttl: 10},
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:delete).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :one},
+        using: {ttl: 10},
       })
 
       adapter.delete('foo')
@@ -242,17 +199,17 @@ describe "Cassanity adapter" do
       options = {
         primary_key: :some_key,
         delete: {
-          using: {consistency: :one},
+          using: {ttl: 10},
         },
       }
       adapter = Adapter[adapter_name].new(client, options)
 
       client.should_receive(:delete).with({
         where: {:some_key => 'foo'},
-        using: {consistency: :one},
+        using: {ttl: 20},
       })
 
-      adapter.delete('foo', using: {consistency: :one})
+      adapter.delete('foo', using: {ttl: 20})
     end
   end
 end
