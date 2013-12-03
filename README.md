@@ -1,4 +1,4 @@
-# Adapter::Cassanity
+# Adapter::Cassanity [![Build Status](https://secure.travis-ci.org/jnunemaker/adapter-cassanity.png?branch=master)](http://travis-ci.org/jnunemaker/adapter-cassanity)
 
 Adapter for Cassanity. Defaults consistency to :quorum.
 
