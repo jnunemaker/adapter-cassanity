@@ -19,16 +19,11 @@ logger = Logger.new(log_path.join('test.log'))
 COLUMN_FAMILIES = {}
 
 cassandra_setup = lambda { |args|
-  host          = ENV.fetch('CASSANDRA_HOST', '127.0.0.1:9160')
+  host          = ENV.fetch('CASSANDRA_HOST', '127.0.0.1')
+  port          = ENV.fetch('CASSANDRA_PORT', '9042').to_i
   keyspace_name = ENV.fetch('CASSANDRA_KEYSPACE_NAME', 'adapter_cassanity')
-  client        = CassandraCQL::Database.new(host, cql_version: '3.0.0')
-  executor      = Cassanity::Executors::CassandraCql.new({
-    client: client, # cassanity 0.4.0 wants this
-    driver: client, # cassanity 0.5.0 wants this
-    logger: logger,
-  })
-  connection    = Cassanity::Connection.new(executor: executor)
-  keyspace      = connection.keyspace(keyspace_name)
+  client        = Cassanity::Client.new([host], port)
+  keyspace      = client.keyspace(keyspace_name)
   keyspace.recreate
 
   COLUMN_FAMILIES[:single] = keyspace.column_family(:single, {
